@@ -62,12 +62,12 @@
 
 <!-- FLOATING CHECKOUT -->
 <div id="floatBtn" class="fixed bottom-6 right-6 z-40 hidden">
-  <button onclick="toggleCart()" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-bold flex items-center gap-3 hover:scale-105 transition">
+  <button onclick="toggleCart()" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-3 hover:scale-105 transition-all duration-300 ease-in-out">
     Checkout <span id="floatTotal" class="bg-white text-black px-4 py-1 rounded-full font-bold">NPR 0</span>
   </button>
 </div>
 
-<!-- CART & CHECKOUT DRAWER -->
+<!-- CART DRAWER (Simplified - Items + Proceed Link) -->
 <div id="cartOverlay" class="fixed inset-0 z-50 hidden flex justify-end">
   <div class="fixed inset-0 bg-black/60" onclick="toggleCart()"></div>
   <div class="relative w-full max-w-md h-full bg-white shadow-2xl flex flex-col">
@@ -75,67 +75,15 @@
       <h2 class="text-2xl font-bold">Your Cart (<span id="cartCountDrawer">0</span>)</h2>
       <button onclick="toggleCart()" class="text-3xl hover:bg-gray-100 rounded-full w-10 h-10 leading-none">×</button>
     </div>
-
-    <div id="step1" class="flex-1 overflow-y-auto p-6 space-y-4">
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
       <div id="cartItems"></div>
     </div>
-
-    <div id="step2" class="hidden flex-1 overflow-y-auto p-6 space-y-6">
-      <h3 class="text-xl font-bold">Your Information</h3>
-      <input id="cName" type="text" placeholder="Full Name (required)" class="w-full px-5 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-black">
-      <input id="cEmail" type="email" placeholder="Email (required)" class="w-full px-5 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-black">
-      <input id="cPhone" type="text" placeholder="Phone number (optional)" class="w-full px-5 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-black">
-
-      <h3 class="text-xl font-bold mt-8">Payment Method</h3>
-      <div class="space-y-3">
-        <button onclick="selectPayment('esewa')" class="w-full py-4 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition">💜 ESewa/Khalti/IMEPay</button>
-        <button onclick="selectPayment('crypto')" class="w-full py-4 bg-yellow-600 text-white rounded-xl font-bold hover:bg-yellow-700 transition">₿ Crypto Pay</button>
-        <button onclick="selectPayment('paypal')" class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">💳 Paypal Pay</button>
-        <button onclick="selectPayment('mobile')" class="w-full py-4 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">📱 Mobile Banking Pay</button>
-      </div>
-    </div>
-
-    <div id="step3" class="hidden flex-1 overflow-y-auto p-6 space-y-6">
-      <div id="discordUsernameField" class="hidden bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-indigo-200">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-            💬
-          </div>
-          <div>
-            <h3 class="text-xl font-bold text-indigo-900">Discord Username Required</h3>
-            <p class="text-sm text-gray-600">Enter your Discord username to continue with Discord payment</p>
-          </div>
-        </div>
-        <div class="relative">
-          <div class="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 font-semibold">@</div>
-          <input id="cDiscord" type="text" placeholder="Enter username here" 
-                 class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-indigo-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 bg-white font-semibold text-lg shadow-sm">
-        </div>
-        <p class="text-xs text-center text-indigo-600 bg-indigo-50 rounded-xl py-2 mt-3 font-medium">Format: @username (no #0000 needed)</p>
-      </div>
-
-      <h3 class="text-xl font-bold">Complete Payment Via:</h3>
-      <div class="space-y-3">
-        <button id="discordPayBtn" onclick="payVia('discord')" 
-                class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M14.85 3H15c1.103 0 2 .897 2 2v2.15l-1.586-1.585a.996.996 0 00-1.41 0L12.424 7.577a.996.996 0 000 1.41l2.122 2.122c.18.18.423.283.677.283s.497-.103.677-.283L18 8.464V5c0-2.206-1.794-4-4-4h-.15zM3.15 17H3c-1.103 0-2-.897-2-2v-2.15l1.586 1.585c.195.195.438.293.687.293s.492-.098.687-.293l2.122-2.122a.996.996 0 011.41 0l2.122 2.122c.18.18.423.283.677.283s.497-.103.677-.283L18 8.464V15c0 2.206-1.794 4-4 4h-.15zM10 11a3 3 0 100-6 3 3 0 000 6z"/>
-          </svg>
-          💬 Pay via Discord
-        </button>
-        <button onclick="payVia('instagram')" class="w-full py-4 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-xl font-bold hover:from-pink-600 hover:to-orange-600 transition">📸 Pay via Instagram</button>
-        <button onclick="payVia('whatsapp')" class="w-full py-4 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">💚 Pay via WhatsApp</button>
-      </div>
-    </div>
-
     <div class="p-6 border-t bg-gray-50">
       <div class="flex justify-between text-2xl font-bold mb-6">
         <span>Total:</span>
         <span>NPR <span id="finalTotal">0</span></span>
       </div>
-      <button id="proceedBtn" onclick="goToCheckout()" class="w-full py-4 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition">Proceed to Checkout</button>
-      <button id="checkoutBtn" onclick="checkoutNow()" disabled class="hidden w-full py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition opacity-50 cursor-not-allowed">Continue to Payment</button>
-      <button id="backBtn" onclick="backToCart()" class="hidden mt-4 w-full py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-100 transition">← Back</button>
+      <a href="checkout.html" class="block w-full py-4 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition text-center">Proceed to Checkout</a>
       <button onclick="showClearCartModal()" class="mt-4 w-full py-3 border border-red-600 text-red-600 rounded-xl hover:bg-red-50 font-medium">Clear Cart</button>
     </div>
   </div>
@@ -162,7 +110,7 @@
   </div>
 </div>
 
-<!-- ERROR MODAL -->
+<!-- ERROR MODAL (Kept for consistency, though not used in home) -->
 <div id="errorModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70">
   <div class="bg-white rounded-2xl p-8 text-center max-w-md">
     <div class="w-16 h-16 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
@@ -176,7 +124,7 @@
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
+<!-- SUCCESS MODAL (Kept for consistency, though now handled in checkout) -->
 <div id="successModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70">
   <div class="bg-white rounded-2xl p-10 text-center max-w-md">
     <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -186,11 +134,9 @@
     </div>
     <h3 class="text-3xl font-bold mb-4 text-gray-900">Checked Out! ✅</h3>
     <p class="text-gray-600 mb-6">We've received your order! Team will contact you shortly.</p>
-    
     <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-4 rounded-xl font-mono font-bold text-lg mb-8 shadow-lg">
       Order #<span id="successOrderNumber"></span>
     </div>
-    
     <div class="space-y-4">
       <button onclick="createTicket()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition flex items-center justify-center gap-2 shadow-lg">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +159,7 @@
 
 <script>
 const CONFIG = {
-  whatsapp: "9779705468933",
+  whatsapp: "9779823121180",
   instagram: "nepx.store",
   discordWebhook: "https://discord.com/api/webhooks/1444294299201048596/SVxBHu1w-sdKtQSJ1mdO4cDA9a5w-ctPpfXNnnDw9LjKMPTl9a4n8nG1g4CQxn_XtoNh",
   ticketInvite: "https://discord.gg/9t2xzCbtk9"
@@ -230,14 +176,13 @@ const products = [
   {id:1, name:"Discord Nitro Boost (1 Month)", priceNpr:865, priceUsd:6.06, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444342858608935035/image.png?ex=692c5c9c&is=692b0b1c&hm=33cd77cce87f4b72606ca03e75b3df4dc7688d4cad010293514ee349a5304da5&"},
   {id:2, name:"Discord Nitro Basic (1 Month)", priceNpr:300, priceUsd:2.1, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444341619481640971/a3d0f46850b2e424247c991a43beaee5.png?ex=692c5b74&is=692b09f4&hm=aeae70f8c273c9d12f87dea24ee9f3f7fa5cdd617f1611aa1a44290fb34e6ea2&"},
   {id:3, name:"Spotify Premium 1 Month", priceNpr:200, priceUsd:1.40, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344443250409472/d88476f38409227964d46de6aedb72f2.png?ex=692c5e15&is=692b0c95&hm=5e5cc2b2f952def18179632d39f6d4c04114d497656cb83d597b29443760e12d&"},
-  {id:4, name:"Netflix Premium 1 Month", priceNpr:450, priceUsd:3.15, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344502050623508/73a72898a5265702b913ff227b8a0204.png?ex=692c5e23&is=692b0ca3&hm=68e2bf335b1c514de9b7c9db19bd327c0ab0cea7207e37caf12a3b2ade522d59&"},
+  {id:4, name:"Netflix Private Profile (1 Month)", priceNpr:450, priceUsd:3.15, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344502050623508/73a72898a5265702b913ff227b8a0204.png?ex=692c5e23&is=692b0ca3&hm=68e2bf335b1c514de9b7c9db19bd327c0ab0cea7207e37caf12a3b2ade522d59&"},
   {id:5, name:"YouTube Premium 1 Month", priceNpr:150, priceUsd:1.05, cat:"subscriptions", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344727586476184/bc3f6f5d40e2e5e63242cf866e160b55.png?ex=692c5e59&is=692b0cd9&hm=8a8a96f03fe713b49d0dec498283a0a6ec5196cf032f14bc06367c45cbd99e55&"},
-  {id:6, name:"Rechargeable Visa Card ($5 Included)", priceNpr:900, priceUsd:6.31, cat:"giftcards", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344856985075892/5f79a6defe837d721dd2e3b2dba041e1.png?ex=692c5e78&is=692b0cf8&hm=0f67c22aaa821c04837b6a1d0daeed03b08025555c3e063d95a991aeca13042d&"}
+  {id:6, name:"Rechargeable Visa Card ($5 Included)", priceNpr:900, priceUsd:6.31, cat:"giftcards", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444344856985075892/5f79a6defe837d721dd2e3b2dba041e1.png?ex=692c5e78&is=692b0cf8&hm=0f67c22aaa821c04837b6a1d0daeed03b08025555c3e063d95a991aeca13042d&"},
+  {id:7, name:"Rechargeable Mastercard Card ($5 Included)", priceNpr:950, priceUsd:6.66, cat:"giftcards", img:"https://cdn.discordapp.com/attachments/1417398808815603805/1444627273025196092/79779f77d2a5aa5eca98d313c10c7f0e.png?ex=692d657d&is=692c13fd&hm=4ae88eac6c1e7b6f6056b90691917cdbd8a1a024d355883fa641df29c6b5dce5&"},
 ];
 
 let cart = JSON.parse(localStorage.getItem("nepx_cart") || "[]");
-let selectedPayment = null;
-let currentOrderId = null;
 
 function render(items = products) {
   document.getElementById("productsGrid").innerHTML = items.map(p => `
@@ -256,7 +201,6 @@ function render(items = products) {
 }
 render(products);
 
-// 🔥 EXACT COPY - TABS & SEARCH
 document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
   b.classList.add("active");
@@ -275,7 +219,6 @@ function toggleMobileSearch() {
   document.getElementById("mobileSearchBar").classList.toggle("hidden"); 
 }
 
-// Cart functions
 function addToCart(id) {
   const p = products.find(x => x.id === id);
   const ex = cart.find(x => x.id === id);
@@ -296,7 +239,7 @@ function updateCartUI() {
 
   document.getElementById("cartItems").innerHTML = totalItems === 0
     ? `<p class="text-center text-gray-500 py-20 text-lg">Your cart is empty</p>`
-    : cart.map((i,idx) => `
+    : cart.map((i) => `
       <div class="flex gap-4 bg-gray-50 rounded-xl p-4 items-center">
         <img src="${i.img}" class="w-16 h-16 rounded object-cover bg-white p-2" alt="${i.name}">
         <div class="flex-1">
@@ -311,8 +254,6 @@ function updateCartUI() {
         <button onclick="removeFromCart(${i.id})" class="text-red-600 hover:bg-red-100 px-3 py-1 rounded ml-3 text-sm">Remove</button>
       </div>
     `).join('');
-
-  document.getElementById("proceedBtn").classList.toggle("hidden", totalItems === 0);
 }
 
 function changeQty(id, delta) {
@@ -330,134 +271,10 @@ function removeFromCart(id) {
   updateCartUI();
 }
 
-// Checkout functions
-function goToCheckout() {
-  document.getElementById("step1").classList.add("hidden");
-  document.getElementById("step2").classList.remove("hidden");
-  document.getElementById("proceedBtn").classList.add("hidden");
-  document.getElementById("checkoutBtn").classList.remove("hidden");
-  document.getElementById("backBtn").classList.remove("hidden");
+function toggleCart() {
+  document.getElementById("cartOverlay").classList.toggle("hidden");
 }
 
-function backToCart() {
-  document.getElementById("step2").classList.add("hidden");
-  document.getElementById("step3").classList.add("hidden");
-  document.getElementById("step1").classList.remove("hidden");
-  selectedPayment = null;
-  document.getElementById("checkoutBtn").classList.add("hidden");
-  document.getElementById("backBtn").classList.add("hidden");
-  document.getElementById("proceedBtn").classList.remove("hidden");
-}
-
-function selectPayment(method) {
-  selectedPayment = method;
-  document.querySelectorAll("#step2 button").forEach(btn => btn.classList.remove("ring-2", "ring-black"));
-  event.target.classList.add("ring-2", "ring-black");
-  const checkoutBtn = document.getElementById("checkoutBtn");
-  checkoutBtn.disabled = false;
-  checkoutBtn.classList.remove("opacity-50", "cursor-not-allowed");
-}
-
-function checkoutNow() {
-  const name = document.getElementById("cName").value.trim();
-  const email = document.getElementById("cEmail").value.trim();
-
-  if (!name || !email) {
-    showError("Name and Email are required.");
-    return;
-  }
-  if (!selectedPayment) {
-    showError("Please select a payment method.");
-    return;
-  }
-
-  document.getElementById("step2").classList.add("hidden");
-  document.getElementById("step3").classList.remove("hidden");
-  document.getElementById("checkoutBtn").classList.add("hidden");
-  document.getElementById("backBtn").onclick = () => backToCart();
-  
-  document.getElementById("discordUsernameField").classList.remove("hidden");
-  document.getElementById("discordPayBtn").disabled = true;
-}
-
-// Discord validation
-document.addEventListener('DOMContentLoaded', function() {
-  const discordInput = document.getElementById('cDiscord');
-  const discordBtn = document.getElementById('discordPayBtn');
-  
-  discordInput.addEventListener('input', function() {
-    const value = this.value.trim();
-    discordBtn.disabled = !value.length;
-  });
-});
-
-async function payVia(channel) {
-  const name = document.getElementById("cName").value.trim();
-  const email = document.getElementById("cEmail").value.trim();
-  const phone = document.getElementById("cPhone").value.trim();
-  const discord = document.getElementById("cDiscord").value.trim();
-  const total = cart.reduce((a, b) => a + b.priceNpr * b.qty, 0);
-  
-  if (channel === 'discord' && (!discord || discord.length === 0)) {
-    showError("Discord username is required for Discord payments.");
-    return;
-  }
-  
-  currentOrderId = getNextOrderId();
-
-  let msg = `🛒 **New Order - NepX Store**\n\n` +
-            `👤 **Customer:** ${name}\n` +
-            `📧 **Email:** ${email}\n` +
-            `📱 **Phone:** ${phone || 'N/A'}\n` +
-            `🆔 **Discord:** ${discord ? `@${discord}` : 'N/A'}\n` +
-            `💳 **Payment:** ${selectedPayment.toUpperCase()}\n` +
-            `📦 **Channel:** ${channel.toUpperCase()}\n` +
-            `💰 **Total:** NPR ${total.toLocaleString()}\n\n` +
-            `🛍️ **Order Items:**\n` +
-            `${cart.map(p => `• ${p.name} × ${p.qty} = NPR ${(p.priceNpr * p.qty).toLocaleString()}`).join('\n')}`;
-
-  const payload = {
-    content: `@here 🚀 **NEW ORDER #${currentOrderId}!**`,
-    embeds: [{
-      title: "🛒 NepX Store Order",
-      description: msg,
-      color: 5814783,
-      fields: [
-        { name: "💳 Payment", value: selectedPayment.toUpperCase(), inline: true },
-        { name: "📦 Channel", value: channel.toUpperCase(), inline: true },
-        { name: "🆔 Order ID", value: currentOrderId, inline: true }
-      ],
-      footer: { 
-        text: `Order placed at ${new Date().toLocaleString('en-US', {timeZone: 'Asia/Kathmandu'})}`
-      }
-    }]
-  };
-
-  try {
-    await fetch(CONFIG.discordWebhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.error("❌ Webhook error:", err);
-  }
-
-  if (channel === 'whatsapp') {
-    window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-  } else if (channel === 'instagram') {
-    window.open(`https://ig.me/m/${CONFIG.instagram}?text=${encodeURIComponent(msg)}`, '_blank');
-  }
-
-  cart = [];
-  localStorage.setItem("nepx_cart", JSON.stringify(cart));
-  updateCartUI();
-  toggleCart();
-  document.getElementById("successModal").classList.remove("hidden");
-  document.getElementById("successOrderNumber").textContent = currentOrderId;
-}
-
-// Modal functions
 function showClearCartModal() { document.getElementById("clearCartModal").classList.remove("hidden"); }
 function closeClearCartModal() { document.getElementById("clearCartModal").classList.add("hidden"); }
 function clearCartConfirm() {
@@ -468,31 +285,16 @@ function clearCartConfirm() {
   closeClearCartModal();
 }
 
-function showError(message) {
-  document.getElementById("errorTitle").textContent = "Missing Information";
-  document.getElementById("errorMessage").textContent = message;
-  document.getElementById("errorModal").classList.remove("hidden");
-}
-
 function closeError() { document.getElementById("errorModal").classList.add("hidden"); }
-
+function closeSuccess() { document.getElementById("successModal").classList.add("hidden"); }
 function createTicket() {
   window.open(CONFIG.ticketInvite, '_blank');
   closeSuccess();
 }
 
-function closeSuccess() { document.getElementById("successModal").classList.add("hidden"); }
-
-function toggleCart() {
-  document.getElementById("cartOverlay").classList.toggle("hidden");
-  if (document.getElementById("cartOverlay").classList.contains("hidden")) backToCart();
-}
-
 // Init
 updateCartUI();
-console.log("✅ NepX Store loaded! Categories & Search PERFECT!");
+console.log("✅ NepX Store loaded! Products fixed.");
 </script>
-
 </body>
 </html>
-
