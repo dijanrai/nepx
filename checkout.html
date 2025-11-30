@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NepX Store - Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            dark: '#0a0a0f',
+            card: '#111118',
+            border: '#1f1f2e',
+            cyan: '#00d4ff',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0a0f; color: white; min-height: 100vh; }
+    .card { background: #111118; border: 1px solid #1f1f2e; border-radius: 20px; }
+    input, select { background: #17171f; border: 1px solid #2a2a3a; color: white; }
+    input:focus, select:focus { outline: none; border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,.15); }
+    .discord-field { transition: all .4s ease; max-height: 0; opacity: 0; overflow: hidden; }
+    .discord-field.show { max-height: 140px; opacity: 1; margin-top: 16px; }
+    .loading, .success-popup {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+      opacity: 0; visibility: hidden; transition: all 0.4s ease;
+    }
+    .loading.active, .success-popup.show { opacity: 1; visibility: visible; }
+    .spinner { width: 50px; height: 50px; border: 4px solid #1f1f2e; border-top: 4px solid #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .popup-content {
+      background: #111118; border: 2px solid #00d4ff; border-radius: 20px; padding: 2.5rem; max-width: 90%; width: 420px;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,212,255,0.4); animation: rise 0.6s ease-out;
+    }
+    @keyframes rise { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .copy-btn { transition: all 0.3s; }
+    .copy-btn.copied { background: #10b981 !important; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+  <!-- Loading -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p class="text-cyan text-xl font-bold mt-4">Placing Order...</p>
+  </div>
+
+  <!-- Success Popup with Auto-Copy Button -->
+  <div id="successPopup" class="success-popup">
+    <div class="popup-content">
+      <div class="text-6xl mb-4">Order Placed</div>
+      <p class="text-xl text-cyan font-bold mb-3">Your Order ID:</p>
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <code id="popupOrderId" class="text-3xl font-mono bg-[#17171f] px-6 py-3 rounded-lg text-cyan"></code>
+        <button id="copyBtn" onclick="copyOrderId()" class="copy-btn bg-cyan hover:bg-cyan/90 text-black font-bold px-5 py-3 rounded-lg transition">
+          Copy
+        </button>
+      </div>
+      <p class="text-gray-300 mb-8">Please contact us using this Order ID to complete payment.</p>
+      <button onclick="closePopup()" class="bg-cyan hover:bg-cyan/90 text-black font-bold px-12 py-3 rounded-xl text-lg transition">
+        Got it!
+      </button>
+    </div>
+  </div>
+
+  <div class="w-full max-w-md mx-auto">
+    <h1 class="text-center text-4xl font-bold mb-8">NepX Store</h1>
+
+    <div class="card p-8 shadow-2xl">
+      <div class="mb-8">
+        <h2 class="text-cyan font-bold text-lg mb-4">Order Summary</h2>
+        <div class="bg-[#17171f] rounded-xl p-5 border border-[#2a2a3a]">
+          <div id="productList" class="text-gray-300 space-y-2 text-sm"></div>
+          <div class="border-t border-gray-700 mt-5 pt-4 flex justify-between">
+            <span class="text-gray-400 font-medium">Total</span>
+            <span id="totalDisplay" class="text-2xl font-bold text-cyan"></span>
+          </div>
+        </div>
+      </div>
+
+      <form id="checkoutForm" class="space-y-5">
+        <div>
+          <label class="text-gray-300 text-sm font-medium">Email *</label>
+          <input id="cEmail" type="email" required placeholder="you@gmail.com" class="w-full px-4 py-3 rounded-lg mt-1">
+        </div>
+        <div>
+          <label class="text-gray-300 text-sm font-medium">Phone (optional)</label>
+          <input id="cPhone" type="tel" placeholder="+977 98xxxxxxxx" class="w-full px-4 py-3 rounded-lg mt-1">
+        </div>
+        <div id="discordUsernameField" class="discord-field">
+          <label class="text-gray-300 text-sm font-medium">Discord Username *</label>
+          <input id="cDiscord" type="text" placeholder="@username" class="w-full px-4 py-3 rounded-lg mt-1">
+          <p class="text-xs text-gray-500 mt-1">Only needed for Discord contact</p>
+        </div>
+        <div>
+          <label class="text-gray-300 text-sm font-medium">Payment Method</label>
+          <select id="paymentMethod" required class="w-full px-4 py-3 rounded-lg mt-1">
+            <option value="" disabled selected>Choose method</option>
+            <option value="esewa">ESewa / Khalti / IME Pay</option>
+            <option value="crypto">Crypto (LTC, USDT)</option>
+            <option value="paypal">PayPal</option>
+            <option value="mobile">Bank Transfer</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-gray-300 text-sm font-medium">Contact Via</label>
+          <select id="channel" required class="w-full px-4 py-3 rounded-lg mt-1">
+            <option value="" disabled selected>How to reach you?</option>
+            <option value="discord">Discord (Fastest)</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="instagram">Instagram</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-cyan hover:bg-cyan/90 text-black font-bold text-lg py-4 rounded-xl mt-8 transition">
+          Place Order
+        </button>
+      </form>
+
+      <div class="text-center mt-6">
+        <a href="home.html" class="text-gray-500 hover:text-cyan transition text-sm">Back to Store</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+const CONFIG = {
+  whatsapp: "9779705468933",
+  instagram: "nepx.store",
+  discordWebhook: "https://discord.com/api/webhooks/1444294299201048596/SVxBHu1w-sdKtQSJ1mdO4cDA9a5w-ctPpfXNnnDw9LjKMPTl9a4n8nG1g4CQxn_XtoNh",
+  ticketInvite: "https://discord.gg/9t2xzCbtk9"
+};
+
+let cart = JSON.parse(localStorage.getItem("nepx_cart") || "[]");
+if (cart.length === 0) {
+  alert("Cart is empty!");
+  window.location.href = "home.html";
+}
+
+// Fixed price calculation
+const totalNpr = cart.reduce((a, b) => a + b.priceNpr * b.qty, 0);
+const totalUsd = cart.reduce((a, b) => a + b.priceUsd * b.qty, 0).toFixed(2);
+
+document.getElementById("productList").innerHTML = cart.map(i => 
+  `<div class="flex justify-between text-sm"><span>${i.name}</span><span class="text-cyan">×${i.qty}</span></div>`
+).join('');
+document.getElementById("totalDisplay").textContent = `NPR ${totalNpr.toLocaleString()} (~$${totalUsd})`;
+
+document.getElementById("channel").addEventListener("change", e => {
+  document.getElementById("discordUsernameField").classList.toggle("show", e.target.value === "discord");
+});
+
+function randomOrderId() {
+  return "NXP" + Math.floor(Math.random() * 90000 + 10000);
+}
+
+// Auto-copy function
+function copyOrderId() {
+  const orderId = document.getElementById("popupOrderId").textContent;
+  navigator.clipboard.writeText(orderId).then(() => {
+    const btn = document.getElementById("copyBtn");
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "Copy";
+      btn.classList.remove("copied");
+    }, 2000);
+  });
+}
+
+function showSuccessPopup(orderId) {
+  document.getElementById("popupOrderId").textContent = orderId;
+  document.getElementById("successPopup").classList.add("show");
+}
+
+function closePopup() {
+  document.getElementById("successPopup").classList.remove("show");
+  window.location.href = "home.html";
+}
+
+document.getElementById("checkoutForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const loading = document.getElementById("loading");
+  const btn = e.target.querySelector("button");
+
+  const email = document.getElementById("cEmail").value.trim();
+  const phone = document.getElementById("cPhone").value.trim();
+  const discord = document.getElementById("cDiscord").value.trim();
+  const payment = document.getElementById("paymentMethod").value.toUpperCase();
+  const channel = document.getElementById("channel").value.toUpperCase();
+
+  if (!email || !payment || !channel || (channel === "DISCORD" && !discord)) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  loading.classList.add("active");
+  btn.disabled = true;
+
+  try {
+    const orderId = randomOrderId();
+
+    const itemsText = cart.map(i => 
+      `• **${i.name}** × ${i.qty} = **NPR ${(i.priceNpr * i.qty).toLocaleString()}**`
+    ).join("\n");
+
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    const date = now.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+
+    await fetch(CONFIG.discordWebhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `@here **NEW ORDER #${orderId}**`,
+        username: "NepX Store",
+        embeds: [{
+          title: `New Order — ${orderId}`,
+          description: `**Customer**\n` +
+            `Email: \`${email}\`\n` +
+            `Phone: \`${phone || '—'}\`\n` +
+            `Discord: ${discord ? '@' + discord : '—'}\n\n` +
+            `**Payment & Contact**\n` +
+            `Payment: **${payment}**\n` +
+            `Contact: **${channel}**\n` +
+            `Total: **NPR ${totalNpr.toLocaleString()}** (~$${totalUsd})\n\n` +
+            `**Items**\n${itemsText}`,
+          color: 16777215,
+          footer: { text: `Order placed • ${date} ${time} • Nepal` },
+          timestamp: now.toISOString()
+        }]
+      })
+    });
+
+    if (channel === "WHATSAPP") window.open(`https://wa.me/${CONFIG.whatsapp}?text=Hi!%20Order%20%23${orderId}`);
+    else if (channel === "INSTAGRAM") window.open("https://ig.me/m/" + CONFIG.instagram);
+    else if (channel === "DISCORD") window.open(CONFIG.ticketInvite, "_blank");
+
+    localStorage.setItem("nepx_cart", "[]");
+    loading.classList.remove("active");
+    showSuccessPopup(orderId);
+
+  } catch (err) {
+    loading.classList.remove("active");
+    btn.disabled = false;
+    alert("Failed to send order. Contact us directly.");
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
